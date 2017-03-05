@@ -4,16 +4,16 @@
 #define HOUR_BUTTON   2
 #define MINUTE_BUTTON 3
 
-#define HOUR_LED            9
-#define MINUTE_LED         10
+#define HOUR_LED           10
+#define MINUTE_LED          9 
 #define BLINK_HZ            4
 
 #define BRIGHTNESS_STEPS    3  //two to the power of STEPS
-#define HOUR_BRIGHTNESS    30U //max brightness, PWM 1~255
-#define MINUTE_BRIGHTNESS  10U
+#define HOUR_BRIGHTNESS     5U //max brightness, PWM 1~255
+#define MINUTE_BRIGHTNESS  20U
 #define PHOTOCELL_PIN       0U
 #define PHOTOCELL_MIN      15U //Set LED to min/max intencity if photocell
-#define PHOTOCELL_MAX     100U //reading is below or above these values
+#define PHOTOCELL_MAX     200U //reading is below or above these values
 #define BRIGHTNESS_MAX    255U
 
 #define EEPROM_INDIRECT    10
@@ -68,7 +68,7 @@ void clock_save() {
     EEPROM.write(offset + 2, s);
 }
 
-void print_time(bool overwrite) {
+void print_time(bool overwrite = true) {
     unsigned int h = fake_rtc_hours();
     unsigned int m = fake_rtc_mins();
     unsigned int s = fake_rtc_secs();
@@ -96,8 +96,6 @@ unsigned char brightness(unsigned char led_base)
     unsigned int reading = analogRead(PHOTOCELL_PIN);
     unsigned int led_max = led_base << BRIGHTNESS_STEPS;
     unsigned char brightness;
-    Serial.print("photocell> ");
-    Serial.println(reading);
     if ( reading < PHOTOCELL_MIN ) {
         brightness = led_base;
     } else {
@@ -107,8 +105,6 @@ unsigned char brightness(unsigned char led_base)
     if (brightness >= BRIGHTNESS_MAX ) {
         brightness = BRIGHTNESS_MAX;
     }
-    Serial.print("brightness> ");
-    Serial.println(brightness);
     return brightness;
 }
 
@@ -156,7 +152,7 @@ void setup() {
 
 void loop() {
     static unsigned int last_save_min;
-    print_time(false);
+    print_time();
     blink_time();
 
     /* Save current time to EEPROM every minute.
@@ -182,7 +178,7 @@ void loop() {
             blink(false, true, 1, 2);
             fake_rtc_advance(0, 1);
         }
-        print_time(true);
+        print_time();
     }
     delay(3000);
 }
