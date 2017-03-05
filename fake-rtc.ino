@@ -3,7 +3,7 @@ unsigned long int rtc_ms = 0;
 
 // a 24H-wrap second counter to handle
 // 32bit overflow (49.7days) for millis()
-unsigned long int seconds() {
+unsigned long seconds(void) {
     static unsigned long last_millis = 0;
     unsigned long new_millis = millis();
     rtc_ms += new_millis - last_millis;
@@ -18,7 +18,7 @@ unsigned long int seconds() {
 
 void fake_rtc_set(int h, int m, int s)
 {
-    rtc_ms = 1000UL * h * m * s;
+    rtc_ms = 1000UL * (h*3600UL + m*60UL + s);
 }
 
 void fake_rtc_advance(unsigned long h, unsigned long m)
@@ -41,4 +41,4 @@ unsigned fake_rtc_secs()
 {
     return seconds() % 60UL;
 }
-
+;
