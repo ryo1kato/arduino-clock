@@ -6,14 +6,20 @@
 
 #define HOUR_LED            9
 #define MINUTE_LED         10
-#define BLINK_HZ            5
-#define HOUR_BRIGHTNESS    20  //PWM 1~255
-#define MINUTE_BRIGHTNESS  15
+#define BLINK_HZ            4
 
+#define BRIGHTNESS_STEPS    3  //two to the power of STEPS
+#define HOUR_BRIGHTNESS    30U //max brightness, PWM 1~255
+#define MINUTE_BRIGHTNESS  10U
+#define PHOTOCELL_PIN       0U
+#define PHOTOCELL_MIN      15U //Set LED to min/max intencity if photocell
+#define PHOTOCELL_MAX     100U //reading is below or above these values
+#define BRIGHTNESS_MAX    255U
 
 #define EEPROM_INDIRECT    10
 #define EEPROM_ROTATE_FREQ 10
 #define EEPROM_VOID        123U
+
 
 
 unsigned int eeprom_current_slot () {
@@ -85,10 +91,33 @@ void print_time(bool overwrite) {
     }
 }
 
-void blink(bool hour, bool minute, int count, int hz=BLINK_HZ) {
+unsigned char brightness(unsigned char led_base)
+{
+    unsigned int reading = analogRead(PHOTOCELL_PIN);
+    unsigned int led_max = led_base << BRIGHTNESS_STEPS;
+    unsigned char brightness;
+    Serial.print("photocell> ");
+    Serial.println(reading);
+    if ( reading < PHOTOCELL_MIN ) {
+        brightness = led_base;
+    } else {
+        brightness = led_base + (led_max - led_base)
+                    * (reading - PHOTOCELL_MIN)/(PHOTOCELL_MAX - PHOTOCELL_MIN);
+    }
+    if (brightness >= BRIGHTNESS_MAX ) {
+        brightness = BRIGHTNESS_MAX;
+    }
+    Serial.print("brightness> ");
+    Serial.println(brightness);
+    return brightness;
+}
+
+void blink(bool hour, bool minute, int count, int hz=BLINK_HZ)
+{
+
     for (int i = 0; i < count; i++) {
-        if (hour)   analogWrite(HOUR_LED, HOUR_BRIGHTNESS);
-        if (minute) analogWrite(MINUTE_LED, MINUTE_BRIGHTNESS);
+        if (hour)   analogWrite(HOUR_LED, brightness(HOUR_BRIGHTNESS));
+        if (minute) analogWrite(MINUTE_LED, brightness(MINUTE_BRIGHTNESS));
         delay(1000/hz);
         analogWrite(HOUR_LED, 0);
         analogWrite(MINUTE_LED, 0);
@@ -99,7 +128,6 @@ void blink(bool hour, bool minute, int count, int hz=BLINK_HZ) {
 void blink_time() {
     unsigned int h = fake_rtc_hours();
     unsigned int m = fake_rtc_mins();
-    unsigned int s = fake_rtc_secs();
 
     // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
     blink(true,   true, (h%12) / 3 + 1);
@@ -127,8 +155,8 @@ void setup() {
 #define M_BTN_PRESSED  (digitalRead(MINUTE_BUTTON) == LOW)
 
 void loop() {
-    static int last_save_min;
-    print_time(true);
+    static unsigned int last_save_min;
+    print_time(false);
     blink_time();
 
     /* Save current time to EEPROM every minute.
