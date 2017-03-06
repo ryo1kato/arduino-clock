@@ -5,12 +5,12 @@
 #define MINUTE_BUTTON 3
 
 #define HOUR_LED           10
-#define MINUTE_LED          9 
+#define MINUTE_LED          9
 #define BLINK_HZ            4
 
-#define BRIGHTNESS_STEPS    3  //two to the power of STEPS
-#define HOUR_BRIGHTNESS     5U //max brightness, PWM 1~255
-#define MINUTE_BRIGHTNESS  20U
+#define BRIGHTNESS_STEPS    5  //two to the power of STEPS
+#define HOUR_BRIGHTNESS     1U //minimum brightness, PWM 1~255
+#define MINUTE_BRIGHTNESS   4U
 #define PHOTOCELL_PIN       0U
 #define PHOTOCELL_MIN      15U //Set LED to min/max intencity if photocell
 #define PHOTOCELL_MAX     200U //reading is below or above these values
