@@ -1,24 +1,38 @@
 #include <EEPROM.h>
 
+#define BOARD_TRINKET
+
+//Adafruit Trinket
+#ifdef BOARD_TRINKET
+#   define A2 1
+#   define A4 2
+#   define HOUR_LED       0
+#   define MINUTE_LED     4
+#   define HOUR_BUTTON    3
+#   define MINUTE_BUTTON  1
+#   define PHOTOCELL_PIN  A2
+#elif defined(BOARD_NEOPIXEL)
+
+#else // default config for Arduino UNO/Nano/Micro with LED
+#define CONFIG_SERIAL_OUTPUT
+#   define HOUR_LED       10
+#   define MINUTE_LED      9
+#   define HOUR_BUTTON     2
+#   define MINUTE_BUTTON   3
+#   define PHOTOCELL_PIN   0U
+#endif
+
+
+
 #define BAUD 9600
-#define HOUR_BUTTON   2
-#define MINUTE_BUTTON 3
-
-#define HOUR_LED           10
-#define MINUTE_LED          9
 #define BLINK_HZ            4
-
 #define BRIGHTNESS_STEPS    5  //two to the power of STEPS
-#define HOUR_BRIGHTNESS     1U //minimum brightness, PWM 1~255
+#define HOUR_BRIGHTNESS     4U //minimum brightness, PWM 1~255
 #define MINUTE_BRIGHTNESS   4U
-#define PHOTOCELL_PIN       0U
 #define PHOTOCELL_MIN      15U //Set LED to min/max intencity if photocell
 #define PHOTOCELL_MAX     200U //reading is below or above these values
 #define BRIGHTNESS_MAX    255U
-
-#define EEPROM_INDIRECT    10
-#define EEPROM_ROTATE_FREQ 10
-#define EEPROM_VOID        123U
+#define EEPROM_VOID       123U
 
 
 
@@ -55,6 +69,7 @@ void clock_save() {
         offset = 0;
     }
 
+#ifdef CONFIG_SERIAL_OUTPUT
     Serial.print(" Saving to EEPROM: ");
     Serial.print(h);    Serial.print(":");
     Serial.print(m);    Serial.print(":");
@@ -62,12 +77,14 @@ void clock_save() {
     Serial.print(" offset: ");
     Serial.print(offset);
     Serial.print("\r\n");
+#endif
 
     EEPROM.write(offset + 0, h);
     EEPROM.write(offset + 1, m);
     EEPROM.write(offset + 2, s);
 }
 
+#ifdef CONFIG_SERIAL_OUTPUT
 void print_time(bool overwrite = true) {
     unsigned int h = fake_rtc_hours();
     unsigned int m = fake_rtc_mins();
@@ -90,9 +107,13 @@ void print_time(bool overwrite = true) {
         Serial.print("\r\n");
     }
 }
+#else
+#define print_time() /* disappear */
+#endif
 
 unsigned char brightness(unsigned char led_base)
 {
+#ifdef PHOTOCELL_PIN
     unsigned int reading = analogRead(PHOTOCELL_PIN);
     unsigned int led_max = led_base << BRIGHTNESS_STEPS;
     unsigned char brightness;
@@ -106,6 +127,9 @@ unsigned char brightness(unsigned char led_base)
         brightness = BRIGHTNESS_MAX;
     }
     return brightness;
+#else
+    return BRIGHTNESS_MAX
+#endif
 }
 
 void blink(bool hour, bool minute, int count, int hz=BLINK_HZ)
@@ -134,7 +158,9 @@ void blink_time() {
 }
 
 void setup() {
+#ifdef CONFIG_SERIAL_OUTPUT
     Serial.begin(BAUD);
+#endif
     clock_load();
     pinMode(HOUR_BUTTON, INPUT_PULLUP);
     pinMode(MINUTE_BUTTON, INPUT_PULLUP);
@@ -180,6 +206,7 @@ void loop() {
         }
         print_time();
     }
+
     delay(3000);
 }
 ;
