@@ -1,20 +1,35 @@
 #include <EEPROM.h>
 
-#define BOARD_TRINKET
+#define BOARD_TRINKET_NEOPIXEL
 
-//Adafruit Trinket
 #ifdef BOARD_TRINKET
 #   define A2 1
+#   define A3 3
 #   define A4 2
 #   define HOUR_LED       0
 #   define MINUTE_LED     4
 #   define HOUR_BUTTON    3
 #   define MINUTE_BUTTON  1
 #   define PHOTOCELL_PIN  A2
-#elif defined(BOARD_NEOPIXEL)
-
+#elif defined(BOARD_TRINKET_NEOPIXEL)
+#   include <Adafruit_NeoPixel.h>
+#   define A2 1
+#   define A3 3
+#   define A4 2
+#   define NEOPIXEL_PIN  (0)
+#   define NUMPIXELS     (10)
+#   define HOUR_BUTTON    3
+#   define MINUTE_BUTTON  1
+#   define PHOTOCELL_PIN  A2
+#elif defined(BOARD_NANO_NEOPIXEL)
+#   define CONFIG_SERIAL_OUTPUT
+#   include <Adafruit_NeoPixel.h>
+#   define NEOPIXEL_PIN   (8)
+#   define NUMPIXELS     (10)
+#   define HOUR_BUTTON     6
+#   define MINUTE_BUTTON   7
 #else // default config for Arduino UNO/Nano/Micro with LED
-#define CONFIG_SERIAL_OUTPUT
+#   define CONFIG_SERIAL_OUTPUT
 #   define HOUR_LED       10
 #   define MINUTE_LED      9
 #   define HOUR_BUTTON     2
@@ -35,6 +50,7 @@
 #define EEPROM_VOID       123U
 
 
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
 
 unsigned int eeprom_current_slot () {
     for (unsigned int i=0; i < EEPROM.length() ; i++) {
@@ -128,13 +144,15 @@ unsigned char brightness(unsigned char led_base)
     }
     return brightness;
 #else
-    return BRIGHTNESS_MAX
+    return BRIGHTNESS_MAX;
 #endif
 }
 
+
+
+#if defined(HOUR_LED) && defined(MINUTE_LED)
 void blink(bool hour, bool minute, int count, int hz=BLINK_HZ)
 {
-
     for (int i = 0; i < count; i++) {
         if (hour)   analogWrite(HOUR_LED, brightness(HOUR_BRIGHTNESS));
         if (minute) analogWrite(MINUTE_LED, brightness(MINUTE_BRIGHTNESS));
@@ -148,22 +166,61 @@ void blink(bool hour, bool minute, int count, int hz=BLINK_HZ)
 void blink_time() {
     unsigned int h = fake_rtc_hours();
     unsigned int m = fake_rtc_mins();
-
-    // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
     blink(true,   true, (h%12) / 3 + 1);
     blink(true,  false, (h%12) % 3);
     delay(1000/BLINK_HZ);
     blink(false,  true, m / 10 );
+    blink(0, 100, 0, m / 10 );
     delay(2*1000/BLINK_HZ);
 }
+#endif
+
+#if defined(NEOPIXEL_PIN)
+void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=BLINK_HZ)
+{
+    for (int i = 0; i < count; i++) {
+        pixels.setPixelColor(0, pixels.Color(r, g, b));
+        pixels.setPixelColor(1, pixels.Color(r, g, b));
+        pixels.show();
+        delay(1000/hz);
+        pixels.clear();
+        pixels.show();
+        delay(1000/hz);
+    }
+}
+
+void blink_time() {
+    unsigned int h = fake_rtc_hours();
+    unsigned int m = fake_rtc_mins();
+    int br = brightness(HOUR_BRIGHTNESS);
+    // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
+    blink(br, 0, br, (h%12) / 3 + 1);
+    delay(1000/BLINK_HZ);
+
+    blink(br, 0, 0, (h%12) % 3);
+    delay(1000/BLINK_HZ);
+
+    blink(0, br, 0, m / 10 );
+    delay(2*1000/BLINK_HZ);
+
+    blink(0, 0, br, m % 10, BLINK_HZ*2);
+    delay(2*1000/BLINK_HZ);
+#endif
+}
+
 
 void setup() {
 #ifdef CONFIG_SERIAL_OUTPUT
     Serial.begin(BAUD);
 #endif
     clock_load();
+#if defined(HOUR_BUTTON) && defined(MINUTE_BUTTON)
     pinMode(HOUR_BUTTON, INPUT_PULLUP);
     pinMode(MINUTE_BUTTON, INPUT_PULLUP);
+#endif
+#if defined(HOUR_LED) && defined(MINUTE_LED)
+    pinMode(HOUR_LED, OUTPUT);
+    pinMode(MINUTE_LED, OUTPUT);
     pinMode(HOUR_LED, OUTPUT);
     pinMode(MINUTE_LED, OUTPUT);
     digitalWrite(HOUR_LED, HIGH);
@@ -171,10 +228,43 @@ void setup() {
     delay(100);
     digitalWrite(HOUR_LED, LOW);
     digitalWrite(MINUTE_LED, LOW);
+#endif
+#ifdef NEOPIXEL_PIN
+    // Walk through colors as a simple initial test
+    pixels.begin();
+    pixels.setPixelColor(0, pixels.Color(255, 0, 0));
+    pixels.setPixelColor(1, pixels.Color(0, 255, 0));
+    pixels.show();
+    delay(500);
+    pixels.setPixelColor(0, pixels.Color(0, 255, 0));
+    pixels.setPixelColor(1, pixels.Color(0, 0, 255));
+    pixels.show();
+    delay(500);
+    pixels.setPixelColor(0, pixels.Color(0, 0, 255));
+    pixels.setPixelColor(1, pixels.Color(255, 0, 0));
+    pixels.show();
+    delay(500);
+    pixels.clear();
+    pixels.show();
+#endif
 }
 
 #define H_BTN_PRESSED  (digitalRead(HOUR_BUTTON) == LOW)
 #define M_BTN_PRESSED  (digitalRead(MINUTE_BUTTON) == LOW)
+
+#if defined(HOUR_LED) && defined(MINUTE_LED)
+#define blink_adj_hour()   blink(true,  false, 1, 2)
+#define blink_adj_10min()  blink(true,  true,  1, 2)
+#define blink_adj_min()    blink(false, true,  1, 2)
+#elif defined(NEOPIXEL_PIN)
+#define blink_adj_hour()   blink(BRIGHTNESS_MAX, 0, 0, 1, 2);
+#define blink_adj_10min()  blink(0, BRIGHTNESS_MAX, 0, 1, 2);
+#define blink_adj_min()    blink(0, 0, BRIGHTNESS_MAX, 1, 2);
+#else
+#define blink_adj_hour()   /* nothing */
+#define blink_adj_10min()  /* nothing */
+#define blink_adj_min()    /* nothing */
+#endif
 
 void loop() {
     static unsigned int last_save_min;
@@ -191,21 +281,23 @@ void loop() {
         last_save_min = fake_rtc_mins();
     }
 
+#if defined(HOUR_BUTTON) && defined(MINUTE_BUTTON)
     while ( H_BTN_PRESSED || M_BTN_PRESSED ) {
         if (H_BTN_PRESSED && M_BTN_PRESSED ) {
-            blink(true, true, 1, 2);
+            blink_adj_10min();
             fake_rtc_advance(0, 10);
         }
         else if (H_BTN_PRESSED) {
-            blink(true, false, 1, 2);
+            blink_adj_hour();
             fake_rtc_advance(1, 0);
         }
         else if (M_BTN_PRESSED) {
-            blink(false, true, 1, 2);
+            blink_adj_min();
             fake_rtc_advance(0, 1);
         }
         print_time();
     }
+#endif
 
     delay(3000);
 }
