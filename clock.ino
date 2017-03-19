@@ -1,6 +1,7 @@
 #include <EEPROM.h>
 
 #define BOARD_TRINKET_NEOPIXEL
+//#define BOARD_TRINKET
 
 #ifdef BOARD_TRINKET
 #   define A2 1
@@ -37,20 +38,21 @@
 #   define PHOTOCELL_PIN   0U
 #endif
 
-
+#ifdef NEOPIXEL_PIN
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
+#endif
 
 #define BAUD 9600
 #define BLINK_HZ            4
 #define BRIGHTNESS_STEPS    5  //two to the power of STEPS
 #define HOUR_BRIGHTNESS     4U //minimum brightness, PWM 1~255
 #define MINUTE_BRIGHTNESS   4U
-#define PHOTOCELL_MIN      15U //Set LED to min/max intencity if photocell
-#define PHOTOCELL_MAX     200U //reading is below or above these values
+#define PHOTOCELL_MIN     100U //Set LED to min/max intencity if photocell
+#define PHOTOCELL_MAX     900U //reading is below or above these values
 #define BRIGHTNESS_MAX    255U
 #define EEPROM_VOID       123U
 
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
 
 unsigned int eeprom_current_slot () {
     for (unsigned int i=0; i < EEPROM.length() ; i++) {
@@ -205,8 +207,8 @@ void blink_time() {
 
     blink(0, 0, br, m % 10, BLINK_HZ*2);
     delay(2*1000/BLINK_HZ);
-#endif
 }
+#endif
 
 
 void setup() {
