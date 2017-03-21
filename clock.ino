@@ -1,7 +1,8 @@
 #include <EEPROM.h>
 
-#define BOARD_TRINKET_NEOPIXEL
+//#define BOARD_TRINKET_NEOPIXEL
 //#define BOARD_TRINKET
+#define BOARD_NANO_NEOPIXEL
 
 #ifdef BOARD_TRINKET
 #   define A2 1
@@ -29,6 +30,7 @@
 #   define NUMPIXELS     (10)
 #   define HOUR_BUTTON     6
 #   define MINUTE_BUTTON   7
+#   define PHOTOCELL_PIN   0U
 #else // default config for Arduino UNO/Nano/Micro with LED
 #   define CONFIG_SERIAL_OUTPUT
 #   define HOUR_LED       10
