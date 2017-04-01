@@ -12,6 +12,9 @@
 #define DS3231_CONTROL  0x0E
 #define DS3231_STATUSREG 0x0F
 
+// Control Register bits
+#define DS3231_EN32kHz (3)
+
 #define SECONDS_PER_DAY 86400L
 
 #define SECONDS_FROM_1970_TO_2000 946684800
@@ -74,7 +77,7 @@ DateTime::DateTime (uint32_t t) {
     uint8_t leap;
     for (yOff = 0; ; ++yOff) {
         leap = yOff % 4 == 0;
-        if (days < 365 + leap)
+        if (days < 365U + leap)
             break;
         days -= 365 + leap;
     }
@@ -115,7 +118,15 @@ DateTime::DateTime (const char* date, const char* time) {
     yOff = conv2d(date + 9);
     // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
     switch (date[0]) {
-        case 'J': m = date[1] == 'a' ? 1 : m = date[2] == 'n' ? 6 : 7; break;
+        case 'J':
+            if ( date[1] == 'a' ) {
+                m = 1;
+            } else if ( date[2] == 'n' ) {
+                m = 6;
+            } else {
+                m = 7;
+            }
+            break;
         case 'F': m = 2; break;
         case 'A': m = date[2] == 'r' ? 4 : 8; break;
         case 'M': m = date[2] == 'r' ? 3 : 5; break;
@@ -159,13 +170,15 @@ static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
 uint8_t RTC_DS3231::begin(void) {
     TinyWireM.begin();
+    uint8_t reg = read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG);
+    reg &= ~_BV(DS3231_EN32kHz); //disable 32kHz to save power.
+    write_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG, reg);
     return 1;
 }
 
 
 bool RTC_DS3231::lostPower(void) {
-  return (read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG) >> 7);
-    
+    return (read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG) >> 7);
 }
 
 void RTC_DS3231::adjust(const DateTime& dt) {
