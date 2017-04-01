@@ -1,5 +1,10 @@
-#include <Adafruit_NeoPixel.h>
-// Date and time functions using a DS3231 RTC connected via I2C and Wire lib
+#include <avr/sleep.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/common.h>
+#include <avr/wdt.h>
+#include <avr/sleep.h>
+
 #include <TinyWireM.h>
 #include "TinyRTClib.h"
 #include "Narcoleptic.h"
@@ -30,7 +35,10 @@
 #define BUTTONS_PIN        PB5_ANALOG  // A0 = PB5 = RST
 
 
-#define delay Narcoleptic.delay
+void msleep (uint32_t msecs) {
+    Narcoleptic.delay(msecs);
+}
+#define delay msleep
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -47,6 +55,12 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
+#ifdef NEOPIXEL_PIN
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
 //
 // Initialization Codes
 //
@@ -59,10 +73,17 @@ SendOnlySoftwareSerial mySerial(DEBUG_TX_PIN);
 #define Serial mySerial  //Avoid conflict with the standard ATTinyCore's TinySoftwareSerial
 #endif //DEBUG_TX_PIN
 
+void setup_powersave () {
+    MCUCR |= _BV(BODS) | _BV(BODSE);  //turn off the brown-out detector
+    ADCSRA &= ~_BV(ADEN); // disable adc
+    ACSR |= _BV(ACD);     //disable the analog comparator
+    PRR = bit(PRTIM1);
+}
+
 
 #ifdef PWRCTL_PIN
-unsigned int pwrctl_users=0;
-void setup_power() {
+unsigned int pwrctl_users = 0U;
+void setup_powerctl() {
     pinMode(PWRCTL_PIN, OUTPUT);
     digitalWrite(PWRCTL_PIN, LOW);
 }
@@ -79,7 +100,7 @@ void power_disable () {
     }
 }
 #else // let them disappear
-#   define setup_power()
+#   define setup_powerctl()
 #   define power_enable()
 #   define power_disable()
 #endif
@@ -97,9 +118,9 @@ void setup_rtc() {
 }
 
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
 
 void setup_neopixel () {
+#ifdef NEOPIXEL_PIN
     pinMode(NEOPIXEL_PIN, OUTPUT);
     // Walk through colors as a simple initial test
     power_enable();
@@ -116,6 +137,7 @@ void setup_neopixel () {
     pixels.clear();
     pixels.show();
     power_disable();
+#endif
 }
 
 
@@ -164,11 +186,25 @@ void print_time(bool overwrite = false) {
 #define print_time()
 #endif
 
+int analogReadPS(uint8_t pin) {
+
+    ACSR &= ~ _BV(ACD);     // Enablethe analog comparator
+    bitClear(PRR, PRADC);   // power up ADC
+    ADCSRA |= _BV(ADEN);
+
+    unsigned int reading = analogRead(pin);
+
+    ADCSRA &= ~_BV(ADEN);
+    bitSet(PRR, PRADC);     // power down ADC
+    ACSR |= _BV(ACD);       //Disable the analog comparator
+    return reading;
+}
+
 unsigned char brightness()
 {
 #ifdef PHOTOCELL_PIN
     power_enable();
-    unsigned int reading = analogRead(PHOTOCELL_PIN);
+    unsigned int reading = analogReadPS(PHOTOCELL_PIN);
     unsigned char brightness;
     if ( reading < PHOTOCELL_MIN ) {
         brightness = BRIGHTNESS_BASE;
@@ -200,7 +236,7 @@ void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=
         pixels.setPixelColor(0, pixels.Color(r, g, b));
         pixels.setPixelColor(1, pixels.Color(r, g, b));
         pixels.show();
-        delay(1000/hz);
+        delay(1000/hz/2);
         pixels.clear();
         pixels.show();
         power_disable();
@@ -236,7 +272,7 @@ void blink_time() {
 
 
 int readButtons() {
-    unsigned int reading = analogRead(BUTTONS_PIN);
+    unsigned int reading = analogReadPS(BUTTONS_PIN);
     if (reading > 900) {
         return 0;  // 2K ohm pullup
     }
@@ -268,8 +304,9 @@ void advanceRtcMinutes(int minutes) {
 
 
 void setup() {
+    setup_powersave();
     setup_serial();
-    setup_power();
+    setup_powerctl();
     setup_neopixel();
     setup_rtc();
 }
