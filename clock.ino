@@ -38,7 +38,6 @@
 void msleep (uint32_t msecs) {
     Narcoleptic.delay(msecs);
 }
-#define delay msleep
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -47,11 +46,11 @@ void msleep (uint32_t msecs) {
 
 #define NUMPIXELS           (1)
 #define BAUD             (9600)
-#define BLINK_HZ            (4)
+#define BLINK_HZ            (3)
 #define BRIGHTNESS_BASE    ( 4U) //minimum brightness, PWM 1~255
 #define PHOTOCELL_MIN      (50U) //Set LED to min/max intencity if photocell ...
 #define PHOTOCELL_MAX     (700U) //...reading is below or above these values
-#define BRIGHTNESS_MAX    (255U)
+#define BRIGHTNESS_MAX    (128U)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,8 +107,8 @@ void power_disable () {
 
 RTC_DS3231 rtc;
 void setup_rtc() {
-    TinyWireM.begin();
     power_enable();
+    TinyWireM.begin();
     rtc.begin();
     if (rtc.lostPower()) {
         rtc.adjust(DateTime((__DATE__), (__TIME__)));
@@ -127,13 +126,13 @@ void setup_neopixel () {
     pixels.begin();
     pixels.setPixelColor(0, pixels.Color(255, 0, 0));
     pixels.show();
-    delay(300);
+    msleep(300);
     pixels.setPixelColor(0, pixels.Color(0, 255, 0));
     pixels.show();
-    delay(300);
+    msleep(300);
     pixels.setPixelColor(0, pixels.Color(0, 0, 255));
     pixels.show();
-    delay(300);
+    msleep(300);
     pixels.clear();
     pixels.show();
     power_disable();
@@ -236,11 +235,11 @@ void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=
         pixels.setPixelColor(0, pixels.Color(r, g, b));
         pixels.setPixelColor(1, pixels.Color(r, g, b));
         pixels.show();
-        delay(1000/hz/2);
+        msleep(1000/hz/2);
         pixels.clear();
         pixels.show();
         power_disable();
-        delay(1000/hz);
+        msleep(1000/hz);
     }
 }
 
@@ -255,19 +254,19 @@ void blink_time() {
     int br = brightness();
     // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
     blink(br/2, br/2, br/2, (h%12) / 3 + 1);
-    delay(1000/BLINK_HZ);
+    msleep(1000/BLINK_HZ);
 
     //hour
     blink(br, 0, 0, (h%12) % 3);
-    delay(1000/BLINK_HZ);
+    msleep(1000/BLINK_HZ);
 
     //ten minutes
     blink(0, br, 0, m / 10 );
-    delay(2*1000/BLINK_HZ);
+    msleep(2*1000/BLINK_HZ);
 
     //last digit of minutes
     blink(0, 0, br, m % 10, BLINK_HZ*2);
-    delay(2*1000/BLINK_HZ);
+    msleep(2*1000/BLINK_HZ);
 }
 
 
@@ -334,7 +333,7 @@ void loop() {
         btn = readButtons();
     }
 
-    delay(2000);
+    msleep(2000);
 }
 
 ;
