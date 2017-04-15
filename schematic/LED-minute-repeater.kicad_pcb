@@ -3,7 +3,7 @@
   (general
     (links 55)
     (no_connects 0)
-    (area 125.083499 76.061499 154.697501 114.311501)
+    (area 114.579448 73.828 178.513201 122.460182)
     (thickness 1.6)
     (drawings 27)
     (tracks 125)
@@ -269,7 +269,7 @@
     )
   )
 
-  (module Pin_Headers:Pin_Header_Straight_1x04 (layer F.Cu) (tedit 58F1D17B) (tstamp 58ED2DBE)
+  (module Pin_Headers:Pin_Header_Straight_1x04 (layer F.Cu) (tedit 58F2AC09) (tstamp 58ED2DBE)
     (at 129.0828 83.6422)
     (descr "Through hole pin header")
     (tags "pin header")
@@ -277,7 +277,7 @@
     (fp_text reference J3 (at 0.762 9.906 90) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text value I2C (at 0.127 9.906) (layer F.SilkS)
+    (fp_text value I2C (at -0.0508 9.5758 180) (layer F.SilkS)
       (effects (font (size 0.8 0.8) (thickness 0.15)))
     )
     (fp_line (start -1.75 -1.75) (end -1.75 9.4) (layer F.CrtYd) (width 0.05))
@@ -1051,7 +1051,7 @@
   (gr_text GND (at 130.1496 107.7468 90) (layer F.SilkS)
     (effects (font (size 0.6 0.6) (thickness 0.1)))
   )
-  (gr_text "3V3  SCL   SDA   GND" (at 130.302 87.503 270) (layer F.SilkS)
+  (gr_text "3V3  SCL   SDA   GND" (at 126.873 87.757 270) (layer F.SilkS)
     (effects (font (size 0.6 0.6) (thickness 0.125)))
   )
   (gr_text 3V3 (at 130.9878 102.0826 90) (layer F.SilkS)
