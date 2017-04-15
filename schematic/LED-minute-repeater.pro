@@ -1,6 +1,6 @@
-update=2017 March 05, Sunday 22:00:25
+update=2017 April 15, Saturday 15:08:25
 version=1
-last_client=eeschema
+last_client=kicad
 [pcbnew]
 version=1
 LastNetListRead=
@@ -58,8 +58,11 @@ LibName26=opto
 LibName27=atmel
 LibName28=contrib
 LibName29=valves
-LibName30=/Users/rook/Desktop/arduino-nano
-LibName31=/Users/rook/Desktop/iheart-kicad-lib-master/IHE
+LibName30=switches
+LibName31=leds
+LibName32=ws2812b
+LibName33=maxim
+LibName34=zoncon-cache
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
