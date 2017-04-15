@@ -87,16 +87,10 @@ void setup_powerctl() {
     digitalWrite(PWRCTL_PIN, LOW);
 }
 void power_enable () {
-    if ( pwrctl_users <= 0 ) {
-        digitalWrite(PWRCTL_PIN, HIGH);
-    }
-    pwrctl_users++;
+    digitalWrite(PWRCTL_PIN, HIGH);
 }
 void power_disable () {
-    pwrctl_users--;
-    if ( pwrctl_users <= 0 ) {
-        digitalWrite(PWRCTL_PIN, LOW);
-    }
+    digitalWrite(PWRCTL_PIN, LOW);
 }
 #else // let them disappear
 #   define setup_powerctl()
@@ -253,7 +247,7 @@ void blink_time() {
 
     int br = brightness();
     // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
-    blink(br/2, br/2, br/2, (h%12) / 3 + 1);
+    blink(br, br, br, (h%12) / 3 + 1);
     msleep(1000/BLINK_HZ);
 
     //hour
