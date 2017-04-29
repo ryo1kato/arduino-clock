@@ -596,4 +596,12 @@ F 3 "" H 7050 1400 50  0001 C CNN
 	1    7050 1400
 	1    0    0    -1  
 $EndComp
+Text Notes 8150 7650 0    60   ~ 0
+2017-04-29
+Text Notes 7350 7500 0    60   ~ 0
+LED Minute Repeater Clock (ATtiny85)
+Text Notes 10550 7650 0    60   ~ 0
+0.2
+Text Notes 7000 6750 0    40   ~ 0
+[Rev 0.2]\n  - Fixed MCP1700 pin assign (Vin <-> Vout)\n  - Fixed DS3231 pin assign (SCL <-> SDA)
 $EndSCHEMATC
