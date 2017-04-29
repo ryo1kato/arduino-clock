@@ -222,9 +222,9 @@ F 3 "" H 8700 3650 50  0001 C CNN
 	1    8700 3650
 	1    0    0    -1  
 $EndComp
-Text GLabel 7700 3050 0    60   Input ~ 0
-RTC_SDA
 Text GLabel 7700 3150 0    60   Input ~ 0
+RTC_SDA
+Text GLabel 7700 3050 0    60   Input ~ 0
 RTC_SCL
 $Comp
 L R R6
