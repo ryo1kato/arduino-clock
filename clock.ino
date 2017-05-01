@@ -70,6 +70,11 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN, NEO_RGB + 
 #include <SendOnlySoftwareSerial.h>
 SendOnlySoftwareSerial mySerial(DEBUG_TX_PIN);
 #define Serial mySerial  //Avoid conflict with the standard ATTinyCore's TinySoftwareSerial
+#define debug(fmt, ...) Serial.print(fmt, ##__VA_ARGS__)
+#define debugln(fmt, ...) Serial.println(fmt, ##__VA_ARGS__)
+#else
+#define debug(fmt, ...) /* disappear */
+#define debugln(fmt, ...) /* disappear */
 #endif //DEBUG_TX_PIN
 
 void setup_powersave () {
@@ -88,6 +93,7 @@ void setup_powerctl() {
 }
 void power_enable () {
     digitalWrite(PWRCTL_PIN, HIGH);
+    delay(1ms);
 }
 void power_disable () {
     digitalWrite(PWRCTL_PIN, LOW);
@@ -105,6 +111,8 @@ void setup_rtc() {
     TinyWireM.begin();
     rtc.begin();
     if (rtc.lostPower()) {
+        debug("RTC power lost. Setting default");
+        debugln(__DATE__ " " __TIME__);
         rtc.adjust(DateTime((__DATE__), (__TIME__)));
     }
     power_disable();
@@ -138,6 +146,8 @@ void setup_neopixel () {
 #ifdef CONFIG_SERIAL_OUTPUT
 void setup_serial() {
     Serial.begin(BAUD);
+    Serial.println("")
+    Serial.println("LED Minute Repeater Clock v0.1")
 }
 void print_time(bool overwrite = false) {
     power_enable();
@@ -210,9 +220,9 @@ unsigned char brightness()
     }
     power_disable();
 #ifdef CONFIG_SERIAL_OUTPUT
-    Serial.print("ADC value: ");
+    Serial.print("    ADC value: ");
     Serial.println(reading);
-    Serial.print("Brightness: ");
+    Serial.print("    Brightness: ");
     Serial.println(brightness);
 #endif
     return brightness;
@@ -266,13 +276,15 @@ void blink_time() {
 
 int readButtons() {
     unsigned int reading = analogReadPS(BUTTONS_PIN);
-    if (reading > 900) {
+    debug("    Button ADC: ");
+    debugln(reading);
+    if (reading > 950) {
         return 0;  // 2K ohm pullup
     }
-    else if (reading > 770) {
+    else if (reading > 800) {
         return 1;  //10K ohm button
     }
-    else if (reading > 660) {
+    else if (reading > 700) {
         return 2;  // 5k ohm button
     }
     else {

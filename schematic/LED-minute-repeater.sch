@@ -87,7 +87,7 @@ U 1 1 58D2E967
 P 2250 2600
 F 0 "R3" V 2330 2600 50  0000 C CNN
 F 1 "R_ADC" V 2150 2600 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 2180 2600 50  0001 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 2180 2600 50  0001 C CNN
 F 3 "" H 2250 2600 50  0001 C CNN
 	1    2250 2600
 	1    0    0    -1  
@@ -131,7 +131,7 @@ U 1 1 58D3092A
 P 3150 3000
 F 0 "R4" V 3230 3000 50  0000 C CNN
 F 1 "10K" V 3150 3000 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 3080 3000 50  0001 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 3080 3000 50  0001 C CNN
 F 3 "" H 3150 3000 50  0001 C CNN
 	1    3150 3000
 	1    0    0    -1  
@@ -155,7 +155,7 @@ Text GLabel 2650 2450 2    60   Output ~ 0
 PCELL
 Text GLabel 2250 2000 0    60   Input ~ 0
 PWR_CTRL
-Text GLabel 5800 2700 0    60   Input ~ 0
+Text GLabel 5000 2500 0    60   Input ~ 0
 PWR_CTRL
 Text GLabel 3800 1350 0    60   Output ~ 0
 LED_SIG
@@ -203,12 +203,12 @@ $EndComp
 $Comp
 L +3.3V #PWR05
 U 1 1 58D440B9
-P 9200 3350
-F 0 "#PWR05" H 9200 3200 50  0001 C CNN
-F 1 "+3.3V" H 9200 3490 50  0000 C CNN
-F 2 "" H 9200 3350 50  0001 C CNN
-F 3 "" H 9200 3350 50  0001 C CNN
-	1    9200 3350
+P 9450 3350
+F 0 "#PWR05" H 9450 3200 50  0001 C CNN
+F 1 "+3.3V" H 9450 3490 50  0000 C CNN
+F 2 "" H 9450 3350 50  0001 C CNN
+F 3 "" H 9450 3350 50  0001 C CNN
+	1    9450 3350
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -232,7 +232,7 @@ U 1 1 58D44279
 P 3550 3000
 F 0 "R6" V 3630 3000 50  0000 C CNN
 F 1 "5K" V 3550 3000 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 3480 3000 50  0001 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 3480 3000 50  0001 C CNN
 F 3 "" H 3550 3000 50  0001 C CNN
 	1    3550 3000
 	1    0    0    -1  
@@ -243,7 +243,7 @@ U 1 1 58D44783
 P 3550 2450
 F 0 "R5" V 3630 2450 50  0000 C CNN
 F 1 "2K" V 3550 2450 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 3480 2450 50  0001 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 3480 2450 50  0001 C CNN
 F 3 "" H 3550 2450 50  0001 C CNN
 	1    3550 2450
 	1    0    0    -1  
@@ -294,7 +294,7 @@ F 3 "" H 5050 2950 50  0001 C CNN
 	1    5050 2950
 	1    0    0    -1  
 $EndComp
-Text GLabel 8700 2650 1    60   Input ~ 0
+Text GLabel 8700 2550 1    60   Input ~ 0
 PWR_CTRL
 $Comp
 L CONN_01X03_FEMALE J2
@@ -416,7 +416,7 @@ U 1 1 58ED07EF
 P 8150 1500
 F 0 "C2" H 8175 1600 50  0000 L CNN
 F 1 "1uF" H 8175 1400 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 8188 1350 50  0001 C CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 8188 1350 50  0001 C CNN
 F 3 "" H 8150 1500 50  0001 C CNN
 	1    8150 1500
 	1    0    0    -1  
@@ -426,8 +426,8 @@ L C C1
 U 1 1 58ED0902
 P 7250 1550
 F 0 "C1" H 7275 1650 50  0000 L CNN
-F 1 "1uF" H 7000 1450 50  0000 L CNN
-F 2 "Capacitors_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 7288 1400 50  0001 C CNN
+F 1 "1uF" H 7050 1450 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 7288 1400 50  0001 C CNN
 F 3 "" H 7250 1550 50  0001 C CNN
 	1    7250 1550
 	1    0    0    -1  
@@ -448,8 +448,8 @@ L R R7
 U 1 1 58ED13A3
 P 8050 2800
 F 0 "R7" H 8100 2650 50  0000 C CNN
-F 1 "I2C_PUP" V 8150 2850 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 7980 2800 50  0001 C CNN
+F 1 "SCL_PUP" V 8150 2850 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 7980 2800 50  0001 C CNN
 F 3 "" H 8050 2800 50  0001 C CNN
 	1    8050 2800
 	1    0    0    -1  
@@ -459,8 +459,8 @@ L R R1
 U 1 1 58ED13F2
 P 7850 2800
 F 0 "R1" H 7900 2650 50  0000 C CNN
-F 1 "I2C_PUP" V 7750 2800 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal" V 7780 2800 50  0001 C CNN
+F 1 "SDA_PUP" V 7750 2800 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805_HandSoldering" V 7780 2800 50  0001 C CNN
 F 3 "" H 7850 2800 50  0001 C CNN
 	1    7850 2800
 	1    0    0    -1  
@@ -513,6 +513,69 @@ F 3 "" H 6950 3950 50  0001 C CNN
 	1    6950 3950
 	1    0    0    -1  
 $EndComp
+$Comp
+L WS2812 LED1
+U 1 1 58ED93FE
+P 5800 2600
+F 0 "LED1" H 6200 2700 60  0000 C CNN
+F 1 "WS2812" H 6200 2200 60  0000 C CNN
+F 2 "WS2812:WS2812-8mm" H 6200 2400 60  0001 C CNN
+F 3 "" H 6200 2400 60  0000 C CNN
+	1    5800 2600
+	1    0    0    -1  
+$EndComp
+Text Notes 8150 7650 0    60   ~ 0
+2017-04-29
+Text Notes 7350 7500 0    60   ~ 0
+LED Minute Repeater Clock (ATtiny85)
+Text Notes 10550 7650 0    60   ~ 0
+0.2
+Text Notes 7000 6750 0    40   ~ 0
+[Rev 0.2]\n  - Fixed MCP1700 pin assign (Vin <-> Vout)\n  - Fixed DS3231 pin assign (SCL <-> SDA)
+$Comp
+L C C4
+U 1 1 59052A27
+P 9450 3500
+F 0 "C4" H 9475 3600 50  0000 L CNN
+F 1 "0.1uF" H 9475 3400 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 9488 3350 50  0001 C CNN
+F 3 "" H 9450 3500 50  0001 C CNN
+	1    9450 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C5
+U 1 1 59052ACC
+P 9750 3500
+F 0 "C5" H 9775 3600 50  0000 L CNN
+F 1 "0.1uF" H 9775 3400 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 9788 3350 50  0001 C CNN
+F 3 "" H 9750 3500 50  0001 C CNN
+	1    9750 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C6
+U 1 1 59054059
+P 6500 1500
+F 0 "C6" H 6525 1600 50  0000 L CNN
+F 1 "0.1uF" H 6525 1400 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 6538 1350 50  0001 C CNN
+F 3 "" H 6500 1500 50  0001 C CNN
+	1    6500 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C3
+U 1 1 590540B2
+P 5200 2650
+F 0 "C3" H 5225 2750 50  0000 L CNN
+F 1 "0.1uF (LED)" H 5225 2550 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 5238 2500 50  0001 C CNN
+F 3 "" H 5200 2650 50  0001 C CNN
+	1    5200 2650
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	2250 2450 2650 2450
 Connection ~ 2250 2450
@@ -552,7 +615,7 @@ Wire Wire Line
 Connection ~ 8150 1700
 Connection ~ 7700 1700
 Wire Wire Line
-	7050 1400 7400 1400
+	7250 1400 7400 1400
 Connection ~ 7250 1400
 Wire Wire Line
 	7700 3050 8200 3050
@@ -567,41 +630,38 @@ Connection ~ 8050 3050
 Wire Wire Line
 	8600 1650 8600 1750
 Connection ~ 8600 1700
-$Comp
-L WS2812 LED1
-U 1 1 58ED93FE
-P 5800 2600
-F 0 "LED1" H 6200 2700 60  0000 C CNN
-F 1 "WS2812" H 6200 2200 60  0000 C CNN
-F 2 "WS2812:WS2812-8mm" H 6200 2400 60  0001 C CNN
-F 3 "" H 6200 2400 60  0000 C CNN
-	1    5800 2600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5050 2950 5050 2800
-Wire Wire Line
-	5050 2800 5800 2800
 Connection ~ 6500 1750
 Connection ~ 8000 1400
 Connection ~ 8450 1250
-$Comp
-L PWR_FLAG #FLG021
-U 1 1 58EF1A94
-P 7050 1400
-F 0 "#FLG021" H 7050 1475 50  0001 C CNN
-F 1 "PWR_FLAG" H 6900 1550 50  0000 C CNN
-F 2 "" H 7050 1400 50  0001 C CNN
-F 3 "" H 7050 1400 50  0001 C CNN
-	1    7050 1400
-	1    0    0    -1  
-$EndComp
-Text Notes 8150 7650 0    60   ~ 0
-2017-04-29
-Text Notes 7350 7500 0    60   ~ 0
-LED Minute Repeater Clock (ATtiny85)
-Text Notes 10550 7650 0    60   ~ 0
-0.2
-Text Notes 7000 6750 0    40   ~ 0
-[Rev 0.2]\n  - Fixed MCP1700 pin assign (Vin <-> Vout)\n  - Fixed DS3231 pin assign (SCL <-> SDA)
+Wire Wire Line
+	5350 2500 5350 2700
+Wire Wire Line
+	5350 2700 5800 2700
+Wire Wire Line
+	8700 3650 9750 3650
+Connection ~ 9450 3650
+Wire Wire Line
+	9200 3350 9450 3350
+Wire Wire Line
+	8700 2550 8700 2650
+Wire Wire Line
+	8700 2650 9750 2650
+Wire Wire Line
+	9750 2650 9750 3350
+Connection ~ 6500 1250
+Connection ~ 9450 3350
+Connection ~ 8700 3650
+Connection ~ 8700 2650
+Wire Wire Line
+	6500 1250 6500 1350
+Wire Wire Line
+	6500 1650 6500 1750
+Connection ~ 5200 2800
+Wire Wire Line
+	5050 2800 5800 2800
+Wire Wire Line
+	5000 2500 5350 2500
+Connection ~ 5200 2500
 $EndSCHEMATC
