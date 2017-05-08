@@ -1,0 +1,28 @@
+BOM for SMD version (rev 0.5.1) of the board: https://oshpark.com/shared_projects/CKZP3omf
+There's an THT version of the board too. https://oshpark.com/shared_projects/mC1U04Ox - Simply chagne C and R to THT versions.
+
+Digi-Key Cart: http://www.digikey.com/short/3nb1p4 (Except WS2812B LED)
+
+SW3   Minute       Panasonic Electronic Components EVQ-PE104K
+U1    ATTiny85     ATTINY85-20PU-ND (DIP8)
+R2    PHOTO CELL   Photo resister 10~100k ohm @ 10lux
+R3    R_ADC        0805(2012 metric) 4.7K ohm, or adjust resistance based on photo cell resistance characteristic
+SW2   Hour         Panasonic Electronic Components EVQ-PE104K
+R4    10K          0805(2012 metric)
+U2    DS3231       DS3231SN (SOIC-16W)
+BT1   Battery      Keystone 36-2479-ND
+R6    5K           0805(2012 metric) 5K ohm (4.7K ohm works as well)
+R5    2K           0805(2012 metric) 2K ohm
+J2    WS2812B_OUT  Pin_Headers:Pin_Header_Straight_1x03
+J1    ICSP         Pin_Headers:Pin_Header_Straight_2x03
+U3    MCP1700T     MCP1700T-3302E/MB (SOT89)
+C2    1uF          0805(2012 metric)
+C1    1uF          0805(2012 metric)
+J3    I2C          Pin_Headers:Pin_Header_Straight_1x04
+R7    SCL_PUP      0805(2012 metric) 4.7K ohm
+R1    SDA_PUP      0805(2012 metric) 4.7K ohm
+LED1  WS2812       WS2812-8mm: Designed for  https://www.adafruit.com/product/1734, but only tested with https://www.amazon.com/dp/B01D1FFVOA
+C4    0.1uF        0805(2012 metric)
+C5    0.1uF        0805(2012 metric)
+C6    0.1uF        0805(2012 metric)
+C3    0.1uF (LED)  0805(2012 metric) for WS2812B. You don’t need this when using https://www.amazon.com/dp/B01D1FFVOA
