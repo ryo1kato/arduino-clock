@@ -5,9 +5,12 @@
 #include <avr/wdt.h>
 #include <avr/sleep.h>
 
+#include <EEPROM.h>
 #include <TinyWireM.h>
 #include "TinyRTClib.h"
 #include "Narcoleptic.h"
+
+#define EEPROM_VOID       123U
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,6 +42,7 @@ void msleep (uint32_t msecs) {
     Narcoleptic.delay(msecs);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Other Configurations
@@ -52,6 +56,7 @@ void msleep (uint32_t msecs) {
 #define PHOTOCELL_MAX     (700U) //...reading is below or above these values
 #define BRIGHTNESS_MAX    (128U)
 
+void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=BLINK_HZ);
 
 ///////////////////////////////////////////////////////////////////////////////
 #ifdef NEOPIXEL_PIN
@@ -93,7 +98,7 @@ void setup_powerctl() {
 }
 void power_enable () {
     digitalWrite(PWRCTL_PIN, HIGH);
-    delay(1ms);
+    delay(1);
 }
 void power_disable () {
     digitalWrite(PWRCTL_PIN, LOW);
@@ -111,9 +116,19 @@ void setup_rtc() {
     TinyWireM.begin();
     rtc.begin();
     if (rtc.lostPower()) {
-        debug("RTC power lost. Setting default");
-        debugln(__DATE__ " " __TIME__);
-        rtc.adjust(DateTime((__DATE__), (__TIME__)));
+        debug("RTC power lost. Loading from EEPROM: ");
+        DateTime saved_time = clock_load();
+        debug(saved_time.hour()); debug(":");
+        debug(saved_time.minute()); debug(":");
+        debugln(saved_time.second());
+        rtc.adjust( saved_time );
+        delay(200);
+        blink(100, 0, 0, 3, 10);
+        delay(200);
+    } else {
+        delay(200);
+        blink(0, 100, 0, 3, 10);
+        delay(200);
     }
     power_disable();
 }
@@ -232,12 +247,48 @@ unsigned char brightness()
 }
 
 
+// Poor man's wear-leveling
+unsigned int eeprom_current_slot () {
+    for (unsigned int i=0; i < EEPROM.length() ; i++) {
+        if ( EEPROM.read(i) < EEPROM_VOID ) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+void clock_save(uint8_t h, uint8_t m, uint8_t s) {
+    /* clear current slot */
+    unsigned int offset = eeprom_current_slot();
+    EEPROM.write(offset + 0, EEPROM_VOID);
+    EEPROM.write(offset + 1, EEPROM_VOID);
+    EEPROM.write(offset + 2, EEPROM_VOID);
+
+    offset += 3;
+    if (offset + 3 >= EEPROM.length() ) {
+        offset = 0;
+    }
+
+    EEPROM.write(offset + 0, h);
+    EEPROM.write(offset + 1, m);
+    EEPROM.write(offset + 2, s);
+}
+
+DateTime clock_load() {
+    unsigned int offset = eeprom_current_slot();
+    unsigned char h = EEPROM.read(offset + 0);
+    unsigned char m = EEPROM.read(offset + 1);
+    unsigned char s = EEPROM.read(offset + 2);
+    return DateTime(2000, 1, 1, h, m, s);
+}
+
+
 void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=BLINK_HZ)
 {
     for (int i = 0; i < count; i++) {
         power_enable();
-        pixels.setPixelColor(0, pixels.Color(r, g, b));
-        pixels.setPixelColor(1, pixels.Color(r, g, b));
+        pixels.setPixelColor(0, pixels.Color(g, r, b));
+        pixels.setPixelColor(1, pixels.Color(g, r, b));
         pixels.show();
         msleep(1000/hz/2);
         pixels.clear();
@@ -248,12 +299,14 @@ void blink(unsigned char r, unsigned char g, unsigned char b, int count, int hz=
 }
 
 
+int last_save_min = 0;
 void blink_time() {
     power_enable();
     DateTime now = rtc.now();
     power_disable();
     uint8_t h = now.hour();
     uint8_t m = now.minute();
+    uint8_t s = now.second();
 
     int br = brightness();
     // once -> 0, twice -> 3, tri -> 6, quad -> 9 o'clock
@@ -261,16 +314,22 @@ void blink_time() {
     msleep(1000/BLINK_HZ);
 
     //hour
-    blink(br, 0, 0, (h%12) % 3);
+    blink(0, br, 0, (h%12) % 3);
     msleep(1000/BLINK_HZ);
 
     //ten minutes
-    blink(0, br, 0, m / 10 );
+    blink(br, 0, 0, m / 10 );
     msleep(2*1000/BLINK_HZ);
 
     //last digit of minutes
     blink(0, 0, br, m % 10, BLINK_HZ*2);
     msleep(2*1000/BLINK_HZ);
+
+    if (last_save_min != m) {
+        clock_save(h, m, s);
+        last_save_min = m;
+    }
+
 }
 
 
