@@ -1,0 +1,3 @@
+[submodule "narcoleptic"]
+	path = narcoleptic
+	url = https://github.com/brabl2/narcoleptic
